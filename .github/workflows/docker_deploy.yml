@@ -13,6 +13,9 @@ env:
   COST_CENTER: "NO PROGRAM / 000000"
   STACK_NAME_PREFIX: application-repository
   CONTAINER_ENV: example
+  HOST_NAME: my-application.synapse.org
+  HOSTED_ZONE_NAME: synapse.org
+  HOSTED_ZONE_ID: ZYZU99KV4AABC
  
 
 jobs:
