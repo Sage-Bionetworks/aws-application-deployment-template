@@ -4,6 +4,8 @@ from aws_cdk import (Stack,
 	aws_ecs as ecs,
 	aws_ecs_patterns as ecs_patterns,
 	aws_ssm as ssm,
+	aws_elasticloadbalancingv2 as elbv2,
+	aws_route53 as r53,
 	Duration,
 	Tags)
 
