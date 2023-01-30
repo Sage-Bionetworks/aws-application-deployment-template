@@ -127,7 +127,8 @@ class DockerFargateStack(Stack):
             domain_zone=zone) #  The Route53 hosted zone for the domain, e.g. “example.com.”
             
         # Overriding health check timeout helps with sluggishly responding app's (e.g. Shiny)
-        # https://docs.aws.amazon.com/cdk/api/v1/python/aws_cdk.aws_elasticloadbalancingv2/ApplicationTargetGroup.html#aws_cdk.aws_elasticloadbalancingv2.ApplicationTargetGroup    
+        # Additional health-check configuration options are listed here:
+        # https://docs.aws.amazon.com/cdk/api/v1/python/aws_cdk.aws_elasticloadbalancingv2/ApplicationTargetGroup.html#aws_cdk.aws_elasticloadbalancingv2.ApplicationTargetGroup.configure_health_check
         load_balanced_fargate_service.target_group.configure_health_check(interval=Duration.seconds(120), timeout=Duration.seconds(60))
 
         if False: # enable/disable autoscaling
