@@ -4,19 +4,14 @@
 name: Deploy to AWS
 
 on:
-  push:
+  workflow_run:
+    workflows: [ "validate" ]
+    branches: [main]
+    types:
+      - completed
 
-env:
-  IMAGE_PATH_AND_TAG: ghcr.io/application-repository:release-1.0
-  AWS_DEFAULT_REGION: 'us-east-1' 
-  PORT: 3838
-  COST_CENTER: "NO PROGRAM / 000000"
-  STACK_NAME_PREFIX: application-repository
-  CONTAINER_ENV: example
-  HOST_NAME: my-application.synapse.org
-  HOSTED_ZONE_NAME: synapse.org
-  HOSTED_ZONE_ID: ZYZU99KV4AABC
-  AWS_DEPLOYMENT_ROLE: arn:aws:iam::<account-number>:role/<role-name>
+concurrency:
+  group: ${{ github.workflow }}
 
 jobs:
   cdk-deploy:
@@ -28,33 +23,36 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
-          
+        uses: actions/checkout@v3
+
+      - name: Static Analysis
+        uses: pre-commit/action@v3.0.0
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Run unit tests
+        run: python -m pytest tests/ -s -v
+
         # Authenticate to AWS using GitHub OIDC
       - name: Assume AWS Role
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-region: ${{ env.AWS_DEFAULT_REGION }}
-          role-to-assume: ${{ env.AWS_DEPLOYMENT_ROLE }}
+          aws-region: us-east-1
+          role-to-assume: arn:aws:iam::<account-number>:role/<role-name>
           role-session-name: GitHubActions-${{ github.repository_owner }}-${{ github.event.repository.name }}-${{ github.run_id }}
           role-duration-seconds: 1200
-          
+
         # https://github.com/marketplace/actions/aws-cdk-github-actions
       - name: cdk synth
         uses: youyo/aws-cdk-github-actions@v2
         with:
           cdk_subcommand: 'synth'
-          working_dir: 'cdk'
-        env:
-          DOCKER_IMAGE: ${{ env.IMAGE_PATH_AND_TAG }}
- 
+          cdk_args: '--context env=dev --debug'
+
       - name: cdk deploy
         uses: youyo/aws-cdk-github-actions@v2
         with:
           cdk_subcommand: 'deploy'
-          cdk_args: '--require-approval never'
-          working_dir: 'cdk'
+          cdk_args: '--require-approval never --context env=dev --progress events --debug'
           actions_comment: false
-        env:
-          DOCKER_IMAGE: ${{ env.IMAGE_PATH_AND_TAG }}
-           
