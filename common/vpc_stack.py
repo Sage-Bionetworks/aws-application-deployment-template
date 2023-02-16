@@ -6,7 +6,7 @@ from aws_cdk import (Stack,
 
 from constructs import Construct
 
-STACK_ID = "dca-common"
+STACK_ID = "application-repository-common"
 VPC_NAME = f'{STACK_ID}-vpc'
 VPC_CIDR_CONTEXT= "VPC_CIDR"
 
