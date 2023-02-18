@@ -50,7 +50,7 @@ jobs:
           cdk_subcommand: 'synth'
           cdk_args: '--context env=dev --debug'
 
-      # uncomment to deploy to an AWS account
+      # uncomment and update Assume AWS Role (above) with a valid role to deploy to an AWS account
 #      - name: cdk deploy
 #        uses: youyo/aws-cdk-github-actions@v2
 #        with:
