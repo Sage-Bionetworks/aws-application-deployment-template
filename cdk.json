@@ -35,7 +35,7 @@
       "AWS_DEFAULT_REGION": "us-east-1",
       "PORT": "3838",
       "COST_CENTER": "NO PROGRAM / 000000",
-      "STACK_NAME_PREFIX": "application-repository",
+      "STACK_NAME_PREFIX": "application",
       "HOST_NAME": "my-application.synapse.org",
       "HOSTED_ZONE_NAME": "sagebase.org",
       "HOSTED_ZONE_ID": "ZYZU99KV4AABC",
