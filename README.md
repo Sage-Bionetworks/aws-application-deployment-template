@@ -74,4 +74,4 @@ We use the [AWS Secrets Manager](https://docs.aws.amazon.com/secretsmanager/late
 to store secrets for this project.  An AWS best practice is to create secrets
 with a unique ID to prevent conflicts when multiple instances of this project
 is deployed to the same AWS account.  Our naming convention is
-`<cfn stack id>/<environment id>/<secret name>`.  An example is `MyTestStack/dev/MySecret`
+`<cfn stack name>/<environment id>/<secret name>`.  An example is `myapp/dev/MySecret`
