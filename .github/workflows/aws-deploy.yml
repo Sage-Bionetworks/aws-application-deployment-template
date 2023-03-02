@@ -1,21 +1,43 @@
 # Workflow derived from https://github.com/r-lib/actions/tree/master/examples
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 
-name: Deploy to AWS
+name: aws-deploy
 
 on:
-  workflow_run:
-    workflows: [ "validate" ]
-    branches: [main]
-    types:
-      - completed
+  pull_request:
+    branches: ['*']
+  push:
+    branches: ['*']
 
-concurrency:
-  group: ${{ github.workflow }}
+concurrency: ci-${{ github.ref }}
 
 jobs:
-  cdk-deploy:
+  tests:
     runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Static Analysis
+        uses: pre-commit/action@v3.0.0
+
+      - name: cdk synth
+        uses: youyo/aws-cdk-github-actions@v2
+        with:
+          cdk_subcommand: 'synth'
+          actions_comment: false
+          cdk_args: '--context env=dev --debug'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Run unit tests
+        run: python -m pytest tests/ -s -v
+
+  cdk-deploy-dev:
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs: tests
     permissions:
       id-token: write
       contents: read
@@ -24,22 +46,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-
-      - name: Static Analysis
-        uses: pre-commit/action@v3.0.0
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt -r requirements-dev.txt
-
-      - name: Run unit tests
-        run: python -m pytest tests/ -s -v
-
-      - name: cdk synth
-        uses: youyo/aws-cdk-github-actions@v2
-        with:
-          cdk_subcommand: 'synth'
-          actions_comment: false
-          cdk_args: '--context env=dev --debug'
 
 # Uncomment and update role-to-assume with a valid AWS role
 #      - name: Assume AWS Role
@@ -55,5 +61,5 @@ jobs:
 #        uses: youyo/aws-cdk-github-actions@v2
 #        with:
 #          cdk_subcommand: 'deploy'
-#          cdk_args: '--require-approval never --context env=dev --progress events --debug'
+#          cdk_args: '--require-approval never --context env=<context> --progress events --debug'
 #          actions_comment: false
