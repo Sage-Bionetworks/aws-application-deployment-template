@@ -75,7 +75,7 @@ to store secrets for this project.  An AWS best practice is to create secrets
 with a unique ID to prevent conflicts when multiple instances of this project
 is deployed to the same AWS account.  Our naming convention is
 `<cfn stack name>/<environment id>/<secret name>`.  The template in this repo' uses
-the secret name, `ecs`, so an example Secrets Manager name is `myapp/dev/ecs`.
+the secret name, `ecs`, so an example Secrets Manager name is `myapp-dev-DockerFargateStack/dev/ecs`.
 
 
 ## Deployment from GitHub to AWS
