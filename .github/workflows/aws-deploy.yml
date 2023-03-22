@@ -9,6 +9,9 @@ on:
   push:
     branches: ['*']
 
+env:
+   CONTEXT: dev
+
 concurrency: ci-${{ github.ref }}
 
 jobs:
@@ -26,7 +29,7 @@ jobs:
         with:
           cdk_subcommand: 'synth'
           actions_comment: false
-          cdk_args: '--context env=dev --debug'
+          cdk_args: '--context env=${{ env.CONTEXT }} --debug'
 
       - name: Install dependencies
         run: pip install -r requirements.txt -r requirements-dev.txt
@@ -61,5 +64,5 @@ jobs:
 #        uses: youyo/aws-cdk-github-actions@v2
 #        with:
 #          cdk_subcommand: 'deploy'
-#          cdk_args: '--require-approval never --context env=<context> --progress events --debug'
+#          cdk_args: '--require-approval never --context env=${{ env.CONTEXT }} --progress events --debug'
 #          actions_comment: false
