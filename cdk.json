@@ -34,7 +34,10 @@
       "IMAGE_PATH_AND_TAG": "ghcr.io/sage-bionetworks/myapp:release-1.0",
       "AWS_DEFAULT_REGION": "us-east-1",
       "PORT": "3838",
-      "COST_CENTER": "NO PROGRAM / 000000",
+      "TAGS": {
+        "CostCenter": "NO PROGRAM / 000000",
+        "OwnerEmail": "joe@sagebase.org"
+      },
       "STACK_NAME_PREFIX": "myapp",
       "VPC_CIDR": "172.31.0.0/24",
       "ACM_CERT_ARN": "arn:aws:acm:us-east-1:<ACCOUNT_ID>:certificate/<CERT_ID>"
