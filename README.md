@@ -80,17 +80,15 @@ the secret name, `ecs`, so an example Secrets Manager name is `myapp-dev-DockerF
 
 ## Deployment from GitHub to AWS
 
-To allow the GitHub action in your repository to deploy infrastructure to AWS, submit a
+To allow the GitHub action in your repository to deploy to AWS, submit a
 PR like [this](https://github.com/Sage-Bionetworks-IT/organizations-infra/pull/771/files),
 customizing the `StackName`, `Repositories` (name), and the `Account`(s) to 
-in which the infrastructure will be deployed.
+in which the infrastructure will be deployed. More on GitHub OIDC integration
+[here](https://github.com/Sage-Bionetworks-IT/organizations-infra/tree/master/org-formation/650-identity-providers).
 
-Once the PR is merged, an IAM role will be created in each AWS account specified in the PR.  
-The ARN for the role will go into the `role-to-assume` field of `aws-deploy.yml`.  
-NOTE:  To separately deploy into different AWS accounts (say, `dev`, `test`, and `prod`), 
-create separate GitHub branches and customize `aws-deploy.yml` in each branch with the ARN 
-of the role for the target AWS account.
-
+Once the PR is merged, an IAM role will be created in each AWS account listed in the PR.  
+Put the ARNs for the roles in the `ROLE_TO_ASSUME` field of `aws-deploy.yml`, which
+allows switching between development and production based on the git branch.
 
 ## VPC CIDR
 
