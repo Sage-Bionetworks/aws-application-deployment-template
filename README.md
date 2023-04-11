@@ -82,17 +82,17 @@ the secret name, `ecs`, so an example Secrets Manager name is `myapp-dev-DockerF
 
 To allow the GitHub action in your repository to deploy to AWS, submit a
 PR like [this](https://github.com/Sage-Bionetworks-IT/organizations-infra/pull/771/files),
-customizing the `StackName`, `Repositories` (name), and the `Account`(s) to 
+customizing the `StackName`, `Repositories` (name), and the `Account`(s) to
 in which the infrastructure will be deployed. More on GitHub OIDC integration
 [here](https://github.com/Sage-Bionetworks-IT/organizations-infra/tree/master/org-formation/650-identity-providers).
 
-Once the PR is merged, an IAM role will be created in each AWS account listed in the PR.  
+Once the PR is merged, an IAM role will be created in each AWS account listed in the PR.
 Put the ARNs for the roles in the `ROLE_TO_ASSUME` field of `aws-deploy.yml`, which
 allows switching between development and production based on the git branch.
 
 ## VPC CIDR
 
-Select a unique IP address range for the VPC (CIDR) following the instructions 
+Select a unique IP address range for the VPC (CIDR) following the instructions
 [here](https://sagebionetworks.jira.com/wiki/spaces/IT/pages/2850586648/Setup+AWS+VPC).
 Enter the range as the `VPC_CIDR` parameter in the file `cdk.json`.
 
@@ -108,9 +108,9 @@ deployment of the application to make the application available at the desired
 URL. The CDK application exports the DNS name of the Application Load Balancer
 to be consumed in org-formation. [An example PR setting up a CNAME](https://github.com/Sage-Bionetworks-IT/organizations-infra/pull/739).
 
-Find the `LoadBalancerDNS` name: Navigate to the deployed stack in the AWS CloudFormation 
-console and click on the `Outputs` tab.  On the row whose key is `LoadBalancerDNS` look for 
-the value in the `ExportName` column, e.g., `dca-dev-DockerFargateStack-LoadBalancerDNS`. 
+Find the `LoadBalancerDNS` name: Navigate to the deployed stack in the AWS CloudFormation
+console and click on the `Outputs` tab.  On the row whose key is `LoadBalancerDNS` look for
+the value in the `ExportName` column, e.g., `dca-dev-DockerFargateStack-LoadBalancerDNS`.
 Now use the name in the `TargetHostName` definition, for example:
 
 ```

@@ -1,0 +1,51 @@
+
+name: main
+
+on:
+  pull_request:
+    branches: ['*']
+  push:
+    branches: ['*']
+
+concurrency: ci-${{ github.ref }}
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Static Analysis
+        uses: pre-commit/action@v3.0.0
+
+      - name: cdk synth
+        uses: youyo/aws-cdk-github-actions@v2
+        with:
+          cdk_subcommand: 'synth'
+          actions_comment: false
+          cdk_args: '--context env=dev --debug'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Run unit tests
+        run: python -m pytest tests/ -s -v
+
+  cdk-deploy-dev:
+    if: ${{github.ref == 'refs/heads/main'}}
+    needs: tests
+    uses: "./.github/workflows/aws-deploy.yml"
+    secrets: inherit
+    with:
+      CONTEXT: dev
+      ROLE_TO_ASSUME: arn:aws:iam::<dev-account-number>:role/<dev-role-name>
+
+  cdk-deploy-prod:
+    if: ${{github.ref == 'refs/heads/prod'}}
+    needs: tests
+    uses: "./.github/workflows/aws-deploy.yml"
+    secrets: inherit
+    with:
+      CONTEXT: prod
+      ROLE_TO_ASSUME: arn:aws:iam::<production-account-number>:role/<production-role-name>
