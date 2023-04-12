@@ -4,12 +4,14 @@
 name: aws-deploy
 
 on:
-  pull_request:
-    branches: ['*']
-  push:
-    branches: ['*']
-
-concurrency: ci-${{ github.ref }}
+  workflow_call:
+    inputs:
+      CONTEXT:
+        required: true
+        type: string
+      ROLE_TO_ASSUME:
+        required: true
+        type: string
 
 jobs:
   tests:
@@ -18,15 +20,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Static Analysis
-        uses: pre-commit/action@v3.0.0
-
       - name: cdk synth
         uses: youyo/aws-cdk-github-actions@v2
         with:
           cdk_subcommand: 'synth'
           actions_comment: false
-          cdk_args: '--context env=dev --debug'
+          cdk_args: '--context env=${{ inputs].CONTEXT }} --debug'
 
       - name: Install dependencies
         run: pip install -r requirements.txt -r requirements-dev.txt
@@ -34,10 +33,9 @@ jobs:
       - name: Run unit tests
         run: python -m pytest tests/ -s -v
 
-  cdk-deploy-dev:
-    runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/main' }}
+  cdk-deploy:
     needs: tests
+    runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
@@ -47,19 +45,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-# Uncomment and update role-to-assume with a valid AWS role
+# Uncomment for deployment to AWS
 #      - name: Assume AWS Role
 #        uses: aws-actions/configure-aws-credentials@v1
 #        with:
 #          aws-region: us-east-1
-#          role-to-assume: arn:aws:iam::<account-number>:role/<role-name>
+#          role-to-assume: ${{inputs.ROLE_TO_ASSUME }}
 #          role-session-name: GitHubActions-${{ github.repository_owner }}-${{ github.event.repository.name }}-${{ github.run_id }}
 #          role-duration-seconds: 1200
-
-# uncomment to deploy to an AWS account
+#
 #      - name: cdk deploy
 #        uses: youyo/aws-cdk-github-actions@v2
 #        with:
 #          cdk_subcommand: 'deploy'
-#          cdk_args: '--require-approval never --context env=<context> --progress events --debug'
+#          cdk_args: '--require-approval never --context env=${{ inputs].CONTEXT }} --progress events --debug'
 #          actions_comment: false

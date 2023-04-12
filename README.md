@@ -74,26 +74,47 @@ We use the [AWS Secrets Manager](https://docs.aws.amazon.com/secretsmanager/late
 to store secrets for this project.  An AWS best practice is to create secrets
 with a unique ID to prevent conflicts when multiple instances of this project
 is deployed to the same AWS account.  Our naming convention is
-`<cfn stack name>/<environment id>/<secret name>`.  An example is `myapp/dev/MySecret`
+`<cfn stack name>/<environment id>/<secret name>`.  The template in this repo' uses
+the secret name, `ecs`, so an example Secrets Manager name is `myapp-dev-DockerFargateStack/dev/ecs`.
+
+
+## Deployment from GitHub to AWS
+
+To allow the GitHub action in your repository to deploy to AWS, submit a
+PR like [this](https://github.com/Sage-Bionetworks-IT/organizations-infra/pull/771/files),
+customizing the `StackName`, `Repositories` (name), and the `Account`(s) to
+in which the infrastructure will be deployed. More on GitHub OIDC integration
+[here](https://github.com/Sage-Bionetworks-IT/organizations-infra/tree/master/org-formation/650-identity-providers).
+
+Once the PR is merged, an IAM role will be created in each AWS account listed in the PR.
+Put the ARNs for the roles in the `ROLE_TO_ASSUME` field of `main.yml`, which
+allows switching between development and production based on the git branch.
+
+## VPC CIDR
+
+Select a unique IP address range for the VPC (CIDR) following the instructions
+[here](https://sagebionetworks.jira.com/wiki/spaces/IT/pages/2850586648/Setup+AWS+VPC).
+Enter the range as the `VPC_CIDR` parameter in the file `cdk.json`.
+
 
 ## DNS and Certificates
 
-Sage IT manages the creation of DNS records and TLS certificates in [org-formation](https://github.com/Sage-Bionetworks-IT/organizations-infra/tree/master/org-formation).
-The DNS records are managed centrally in the SageIT account, and corresponding
-wildcard TLS certificates are created in any application accounts that will
-deploy applications with custom (non-AWS) domains.
-
-When deploying a new application (or an existing application to a new account,
-e.g. the first deploy to "prod"), first check that a certificate for the
-desired domain has been created in the account the application will be deployed
-to (e.g. [here for app.sagebionetworks.org](https://github.com/Sage-Bionetworks-IT/organizations-infra/blob/master/org-formation/100-shared-dns/_tasks.yaml#L24-L27)).
-If a certificate is needed in a new account, make a request to the IT team
-because there is a manual validation step that must be performed by an
-administrator. Set the value of `ACM_CERT_ARN` context variable to the ARN of
-the certificate in the target account. If the AWS ARN for an existing
-certificate is not known, it can be requested from Sage IT.
+Obtain the ARN of the ACM Certificate by following the instructions
+[here](https://sagebionetworks.jira.com/wiki/spaces/IT/pages/2859302913/Admin+Tasks+for+CDK+Applications)
+Set the value of `ACM_CERT_ARN` context variable to the ARN obtained above.
 
 Finally, a DNS CNAME must be created in org-formation after the initial
 deployment of the application to make the application available at the desired
 URL. The CDK application exports the DNS name of the Application Load Balancer
 to be consumed in org-formation. [An example PR setting up a CNAME](https://github.com/Sage-Bionetworks-IT/organizations-infra/pull/739).
+
+Find the `LoadBalancerDNS` name: Navigate to the deployed stack in the AWS CloudFormation
+console and click on the `Outputs` tab.  On the row whose key is `LoadBalancerDNS` look for
+the value in the `ExportName` column, e.g., `dca-dev-DockerFargateStack-LoadBalancerDNS`.
+Now use the name in the `TargetHostName` definition, for example:
+
+```
+TargetHostName: !CopyValue [!Sub 'dca-dev-DockerFargateStack-LoadBalancerDNS', !Ref DnTDevAccount]
+```
+
+(You would also replace `DnTDevAccount` with the name of the account in which the application is deployed.)

@@ -1,0 +1,38 @@
+
+name: main
+
+on:
+  pull_request:
+    branches: ['*']
+  push:
+    branches: ['*']
+
+concurrency: ci-${{ github.ref }}
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Static Analysis
+        uses: pre-commit/action@v3.0.0
+
+  cdk-deploy-dev:
+    if: ${{github.ref == 'refs/heads/dev'}}
+    needs: tests
+    uses: "./.github/workflows/aws-deploy.yml"
+    secrets: inherit
+    with:
+      CONTEXT: dev
+      ROLE_TO_ASSUME: arn:aws:iam::<dev-account-number>:role/<dev-role-name>
+
+  cdk-deploy-prod:
+    if: ${{github.ref == 'refs/heads/prod'}}
+    needs: tests
+    uses: "./.github/workflows/aws-deploy.yml"
+    secrets: inherit
+    with:
+      CONTEXT: prod
+      ROLE_TO_ASSUME: arn:aws:iam::<production-account-number>:role/<production-role-name>
