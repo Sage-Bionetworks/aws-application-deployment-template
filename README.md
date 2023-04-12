@@ -87,7 +87,7 @@ in which the infrastructure will be deployed. More on GitHub OIDC integration
 [here](https://github.com/Sage-Bionetworks-IT/organizations-infra/tree/master/org-formation/650-identity-providers).
 
 Once the PR is merged, an IAM role will be created in each AWS account listed in the PR.
-Put the ARNs for the roles in the `ROLE_TO_ASSUME` field of `aws-deploy.yml`, which
+Put the ARNs for the roles in the `ROLE_TO_ASSUME` field of `main.yml`, which
 allows switching between development and production based on the git branch.
 
 ## VPC CIDR
