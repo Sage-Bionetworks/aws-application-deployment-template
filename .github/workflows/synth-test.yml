@@ -1,0 +1,23 @@
+
+name: synth-test
+
+on:
+  workflow_call:
+    inputs:
+      CONTEXT:
+        required: true
+        type: string
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: cdk synth
+        uses: youyo/aws-cdk-github-actions@v2
+        with:
+          cdk_subcommand: 'synth'
+          actions_comment: false
+          cdk_args: '--context env=${{ inputs.CONTEXT }} --debug'

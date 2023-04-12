@@ -19,9 +19,27 @@ jobs:
       - name: Static Analysis
         uses: pre-commit/action@v3.0.0
 
+      - name: Install dependencies
+        run: pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Run unit tests
+        run: python -m pytest tests/ -s -v
+
+  synth-test-dev:
+    needs: tests
+    uses: "./.github/workflows/synth-test.yml"
+    with:
+      CONTEXT: dev
+
+  synth-test-prod:
+    needs: tests
+    uses: "./.github/workflows/synth-test.yml"
+    with:
+      CONTEXT: prod
+
   cdk-deploy-dev:
     if: ${{github.ref == 'refs/heads/dev'}}
-    needs: tests
+    needs: [tests, synth-test-dev]
     uses: "./.github/workflows/aws-deploy.yml"
     secrets: inherit
     with:
@@ -30,7 +48,7 @@ jobs:
 
   cdk-deploy-prod:
     if: ${{github.ref == 'refs/heads/prod'}}
-    needs: tests
+    needs: [tests, synth-test-prod]
     uses: "./.github/workflows/aws-deploy.yml"
     secrets: inherit
     with:
