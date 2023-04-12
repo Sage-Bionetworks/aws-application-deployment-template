@@ -54,7 +54,7 @@ class DockerFargateStack(Stack):
             vpc=vpc,
             container_insights=True)
 
-        secret_name = f'{stack_id}/{context}/ecs'
+        secret_name = f'{env.get(config.STACK_NAME_PREFIX_CONTEXT)}-DockerFargateStack/{context}/ecs'
         secrets = {
             SECRETS_MANAGER_ENV_NAME: get_secret(self, secret_name, secret_name)
         }
