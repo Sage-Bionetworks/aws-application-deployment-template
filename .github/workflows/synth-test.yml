@@ -26,7 +26,7 @@ jobs:
           cdk_args: '--context env=${{ inputs.CONTEXT }} --debug'
 
       - name: Install dependencies
-        run: pip install -r ${{ inputs.REQUIREMENTS_FILE_NAME }}
+        run: pip install -r requirements-dev.txt requirements.txt
 
       - name: Run unit tests
         run: python -m pytest tests/ -s -v

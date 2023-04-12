@@ -24,14 +24,12 @@ jobs:
     uses: "./.github/workflows/synth-test.yml"
     with:
       CONTEXT: dev
-      REQUIREMENTS_FILE_NAME: requirements-dev.txt
 
   synth-test-prod:
     needs: tests
     uses: "./.github/workflows/synth-test.yml"
     with:
       CONTEXT: prod
-      REQUIREMENTS_FILE_NAME: requirements.txt
 
   cdk-deploy-dev:
     if: ${{github.ref == 'refs/heads/dev'}}
