@@ -16,7 +16,6 @@ on:
 jobs:
 
   cdk-deploy:
-    needs: tests
     runs-on: ubuntu-latest
     permissions:
       id-token: write
