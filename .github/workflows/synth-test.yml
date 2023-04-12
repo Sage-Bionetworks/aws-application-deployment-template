@@ -7,9 +7,6 @@ on:
       CONTEXT:
         required: true
         type: string
-      REQUIREMENTS_FILE_NAME:
-        required: true
-        type: string
 
 jobs:
   tests:
