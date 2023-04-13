@@ -35,8 +35,8 @@
       "AWS_DEFAULT_REGION": "us-east-1",
       "PORT": "3838",
       "ENV": {
-      	"name1": "value1",
-      	"name2": "value2"
+        "name1": "value1",
+        "name2": "value2"
       },
       "TAGS": {
         "CostCenter": "NO PROGRAM / 000000",
@@ -51,8 +51,8 @@
       "AWS_DEFAULT_REGION": "us-east-1",
       "PORT": "3838",
       "ENV": {
-      	"name1": "value1",
-      	"name2": "value2"
+        "name1": "value1",
+        "name2": "value2"
       },
       "TAGS": {
         "CostCenter": "NO PROGRAM / 000000",
