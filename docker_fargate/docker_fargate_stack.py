@@ -19,8 +19,7 @@ PORT_NUMBER_CONTEXT = "PORT"
 
 # The name of the environment variable that will hold the secrets
 SECRETS_MANAGER_ENV_NAME = "SECRETS_MANAGER_SECRETS"
-CONTAINER_ENV = "CONTAINER_ENV" # name of env passed from GitHub action
-ENV_NAME = "ENV"
+CONTAINER_ENV_NAME = "CONTAINER_ENV"
 
 def get_secret(scope: Construct, id: str, name: str) -> str:
     isecret = sm.Secret.from_secret_name_v2(scope, id, name)
@@ -28,8 +27,8 @@ def get_secret(scope: Construct, id: str, name: str) -> str:
     # see also: https://docs.aws.amazon.com/cdk/api/v1/python/aws_cdk.aws_ecs/Secret.html
     # see also: ecs.Secret.from_ssm_parameter(ssm.IParameter(parameter_name=name))
 
-def get_container_env(env: dict) -> str:
-    return env.get(CONTAINER_ENV)
+def get_container_env(env: dict) -> dict:
+    return env.get(CONTAINER_ENV_NAME, {})
 
 def get_certificate_arn(env: dict) -> str:
     return env.get(ACM_CERT_ARN_CONTEXT)
@@ -59,10 +58,7 @@ class DockerFargateStack(Stack):
             SECRETS_MANAGER_ENV_NAME: get_secret(self, secret_name, secret_name)
         }
 
-        env_vars = {}
-        container_env = get_container_env(env)
-        if container_env is not None:
-            env_vars[ENV_NAME]=container_env
+        env_vars = get_container_env(env)
 
         task_image_options = ecs_patterns.ApplicationLoadBalancedTaskImageOptions(
                    image=ecs.ContainerImage.from_registry(get_docker_image_name(env)),
