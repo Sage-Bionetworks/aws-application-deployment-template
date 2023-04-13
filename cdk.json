@@ -34,7 +34,7 @@
       "IMAGE_PATH_AND_TAG": "ghcr.io/sage-bionetworks/myapp:release-1.0",
       "AWS_DEFAULT_REGION": "us-east-1",
       "PORT": "3838",
-      "ENV": {
+      "CONTAINER_ENV": {
         "name1": "value1",
         "name2": "value2"
       },
@@ -50,7 +50,7 @@
       "IMAGE_PATH_AND_TAG": "ghcr.io/sage-bionetworks/myapp:release-1.0",
       "AWS_DEFAULT_REGION": "us-east-1",
       "PORT": "3838",
-      "ENV": {
+      "CONTAINER_ENV": {
         "name1": "value1",
         "name2": "value2"
       },

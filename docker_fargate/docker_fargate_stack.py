@@ -19,7 +19,7 @@ PORT_NUMBER_CONTEXT = "PORT"
 
 # The name of the environment variable that will hold the secrets
 SECRETS_MANAGER_ENV_NAME = "SECRETS_MANAGER_SECRETS"
-ENV_NAME = "ENV"
+CONTAINER_ENV_NAME = "CONTAINER_ENV"
 
 def get_secret(scope: Construct, id: str, name: str) -> str:
     isecret = sm.Secret.from_secret_name_v2(scope, id, name)
@@ -28,7 +28,7 @@ def get_secret(scope: Construct, id: str, name: str) -> str:
     # see also: ecs.Secret.from_ssm_parameter(ssm.IParameter(parameter_name=name))
 
 def get_container_env(env: dict) -> dict:
-    return env.get(ENV_NAME, {})
+    return env.get(CONTAINER_ENV_NAME, {})
 
 def get_certificate_arn(env: dict) -> str:
     return env.get(ACM_CERT_ARN_CONTEXT)
