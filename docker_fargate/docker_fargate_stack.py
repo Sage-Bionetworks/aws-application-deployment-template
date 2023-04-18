@@ -86,6 +86,7 @@ class DockerFargateStack(Stack):
             task_image_options=task_image_options,
             memory_limit_mib=1024,      # Default is 512
             public_load_balancer=True,  # Default is False
+            redirect_http=True,
             # TLS:
             certificate=cert,
             protocol=elbv2.ApplicationProtocol.HTTPS,
