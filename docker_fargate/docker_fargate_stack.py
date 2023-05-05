@@ -43,13 +43,13 @@ def get_port(env: dict) -> int:
 class DockerFargateStack(Stack):
 
     def __init__(self, scope: Construct, context: str, env: dict, vpc: ec2.Vpc, **kwargs) -> None:
-        stack_prefix = f'{env.get(config.STACK_NAME_PREFIX_CONTEXT)}-{context}'
+        stack_prefix = f'{env.get(config.STACK_NAME_PREFIX_CONTEXT)}'
         stack_id = f'{stack_prefix}-DockerFargateStack'
         super().__init__(scope, stack_id, **kwargs)
 
         cluster = ecs.Cluster(
             self,
-            f'{stack_prefix}-Cluster',
+            f'{stack_id}-Cluster',
             vpc=vpc,
             container_insights=True)
 
